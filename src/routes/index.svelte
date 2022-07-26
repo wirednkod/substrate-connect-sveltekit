@@ -6,22 +6,19 @@
 	import Counter from '$lib/Counter.svelte';
 
 
-import { createScClient, WellKnownChain } from "connectest";
+import { ScProvider, WellKnownChain } from "@polkadot/rpc-provider/substrate-connect";
+import { ApiPromise } from '@polkadot/api';
 
 const all = []
 const start = async () => { 
-      
-  const scClient = createScClient();
-  const westendChain = await scClient.addWellKnownChain(
-    WellKnownChain.westend2,
-    function jsonRpcCallback(response: string) {
-      all.push(JSON.stringify(JSON.parse(response)));
-      document.getElementById('result').innerText = all.join("\n");
-    }
-  );
-  westendChain.sendJsonRpc(
-    '{"jsonrpc":"2.0","id":"1","method":"chainHead_unstable_follow","params":[true]}',
-  );
+
+  const provider = new ScProvider(WellKnownChain.polkadot);
+  await provider.connect(); 
+  // Create the PolkadotJS api instance
+  const api = await ApiPromise.create({ provider });
+  await api.rpc.chain.subscribeNewHeads((lastHeader) => {
+    console.log(lastHeader.hash.toHuman());
+  });
 }
 
 start();

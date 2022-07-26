@@ -8,8 +8,6 @@
 	(The data on the todo app will expire periodically; no
 	guarantees are made. Don't use it to organise your life.)
 */
-import { createScClient, WellKnownChain } from "connectest";
-
 const base = 'https://api.svelte.dev';
 
 export function api(method: string, resource: string, data?: Record<string, unknown>) {
